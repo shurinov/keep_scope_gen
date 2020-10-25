@@ -54,7 +54,7 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-
+void setPixel(int16_t x, int16_t y);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

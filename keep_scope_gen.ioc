@@ -1,6 +1,6 @@
 #MicroXplorer Configuration settings - do not modify
 DAC.DAC_Trigger=DAC_TRIGGER_NONE
-DAC.DAC_Trigger2=DAC_TRIGGER_T15_TRGO
+DAC.DAC_Trigger2=DAC_TRIGGER_NONE
 DAC.IPParameters=DAC_Trigger,DAC_Trigger2
 File.Version=6
 GPIO.groupedBy=Group By Peripherals

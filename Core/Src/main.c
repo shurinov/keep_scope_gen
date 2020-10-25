@@ -23,7 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "keep_logo.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -91,7 +91,8 @@ int main(void)
   MX_GPIO_Init();
   MX_DAC_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
+  HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
   /* USER CODE END 2 */
  
  
@@ -101,7 +102,8 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+    //drawKeep();
+    drawPFK();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -175,7 +177,7 @@ static void MX_DAC_Init(void)
   }
   /** DAC channel OUT2 config 
   */
-  sConfig.DAC_Trigger = DAC_TRIGGER_T15_TRGO;
+  sConfig.DAC_Trigger = DAC_TRIGGER_NONE;
   if (HAL_DAC_ConfigChannel(&hdac, &sConfig, DAC_CHANNEL_2) != HAL_OK)
   {
     Error_Handler();
@@ -225,7 +227,19 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void setPixel(int16_t x, int16_t y)
+{
+  HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, (x+0x07FF)); // add offset to DAC_range/2
+  HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, (y+0x07FF)); // add offset to DAC_range/2
+}
 
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  if(GPIO_Pin == GPIO_PIN_0) // If The INT Source Is EXTI Line9 (A9 Pin)
+  {
+	  HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_8); // Toggle The Output (LED) Pin
+  }
+}
 /* USER CODE END 4 */
 
 /**

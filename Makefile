@@ -37,6 +37,7 @@ BUILD_DIR = build
 # C sources
 C_SOURCES =  \
 Core/Src/main.c \
+Core/Src/keep_logo.c\
 Core/Src/stm32f3xx_it.c \
 Core/Src/stm32f3xx_hal_msp.c \
 Core/Src/stm32f3xx_hal_timebase_tim.c \

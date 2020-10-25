@@ -1,1 +1,9 @@
+build/*
 Drivers/CMSIS/Device/ST/STM32F3xx/Source/Templates/*
+Drivers/CMSIS/Core_A/*
+Drivers/CMSIS/DSP/*
+Drivers/CMSIS/Lib/*
+Drivers/CMSIS/NN/*
+Drivers/CMSIS/RTOS/*
+Drivers/CMSIS/RTOS2/*
+.mxproject
