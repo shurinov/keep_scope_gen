@@ -1,5 +1,7 @@
+.vscode/*
 build/*
 Drivers/CMSIS/Device/ST/STM32F3xx/Source/Templates/*
+Drivers/CMSIS/Core/*
 Drivers/CMSIS/Core_A/*
 Drivers/CMSIS/DSP/*
 Drivers/CMSIS/Lib/*

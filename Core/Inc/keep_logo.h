@@ -13,7 +13,9 @@ typedef struct {
   int16_t *arrY;
 } brLine_t;
 
+void initKeep(void);
 void drawKeep(void);
+void drawKeepRot(void);
 void drawPFK(void);
 void drawTBTC(void);
 

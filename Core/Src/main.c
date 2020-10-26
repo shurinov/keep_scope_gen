@@ -93,6 +93,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
   HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
+  initKeep();
   /* USER CODE END 2 */
  
  
@@ -103,7 +104,9 @@ int main(void)
   {
     /* USER CODE END WHILE */
     //drawKeep();
-    drawPFK();
+    //drawPFK();
+    drawTBTC();
+    //drawKeepRot();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
