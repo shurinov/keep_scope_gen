@@ -8,6 +8,18 @@
 #include "main.h"
 
 
+typedef struct {
+  int16_t x;
+  int16_t y;
+}point_t;
+
+typedef struct {
+  int nodesNumb;
+  int16_t *arrX;
+  int16_t *arrY;
+} brLine_t;
+
+
 uint8_t SIN_TAB_8BIT [] = {0, 2, 3, 5, 6, 8, 9, 11, 13, 14, 16, 17, 19, 20, 22, 24, 25, 27, 28, 30, 31, 33,
 34, 36, 38, 39, 41, 42, 44, 45, 47, 48, 50, 51, 53, 55, 56, 58, 59, 61, 62, 64, 65,
 67, 68, 70, 71, 73, 74, 76, 77, 79, 80, 82, 83, 85, 86, 88, 89, 91, 92, 94, 95, 96,
@@ -28,19 +40,19 @@ int16_t keepX[] = {-92, -92, -76, -76, -92, -92, -76, -76, -60, -60, -44, -44, -
 int16_t keepY[] = {-104, -64, -64, 64, 64, 104, 104, 88, 88, 104, 104, 88, 88, 104, 104, 64, 64, 16, 16,
     64, 64, 104, 104, 64, 64, 4.0, -64, -64, -104, -104, -64, -64, -8, -8, -64, -64, -104, -104};
 
-int16_t PFK0_X [] = {98, 0, -98};
+int16_t PFK0_X [] = {96, 0, -95};//{98, 0, -98};
 int16_t PFK0_Y [] = {14, 112, 14};
 
 int16_t PFK1_X [] = { -28, 0, -42, 42, 0, 28};
 int16_t PFK1_Y [] = { -56, -28, -112, -112, -28, -56};
 
-// int16_t T_X [] = {}
-// int16_t T_Y [] = {}
+int16_t T_X [] = {-63, -63, -7, -7, 7, 7, 63, 63, -63};
+int16_t T_Y [] = {42, 28, 28, -42, -42, 28, 28, 42, 42};
 
 brLine_t figureKEEP = {sizeof(keepX)/sizeof(keepX[0]), keepX, keepY};
 point_t offset = {0, 0};
 uint16_t angle = 0;
-
+int16_t scaleFactor = 0;
 void * workBuffX;
 void * workBuffY;
 
@@ -62,8 +74,20 @@ void initKeep(void)
 
 
 void drawKeep(void)
+{  
+  offset.x = 0;
+  offset.y = 0;
+  drawBrLine(figureKEEP, offset, 16);
+}
+
+
+void drawKeepResize(void)
 {
-    drawBrLine(figureKEEP, offset, 16);
+  drawBrLine(figureKEEP, offset, scaleFactor/10);
+  
+  scaleFactor++;
+  if (scaleFactor > 200)
+    scaleFactor = 0;    
 }
 
 
@@ -90,16 +114,16 @@ void drawPFK(void)
   offset.y = 0;
   drawBrLine(PFK0, offset, 16);
 
-  offset.x = -920;
-  offset.y = -250;  
+  offset.x = -1010;
+  offset.y = -350;  
   drawArc(offset,0x300,(0x00FF + 0x007F),(0x02FF + 0x007F),4);
 
   offset.x = 0;
   offset.y = 0;
   drawBrLine(PFK1, offset, 16);
 
-  offset.x = 1100;
-  offset.y = -240;  
+  offset.x = 1010;
+  offset.y = -350;  
   drawArc(offset,0x300,(0x01FF + 0x007F),(0x03FF + 0x007F),4);
 
   // K letter
@@ -111,10 +135,27 @@ void drawPFK(void)
 
 void drawTBTC(void)
 {
-  //drawArc(offset, 0x77F, 0, 0x400, 3);  
-  drawArcCurve(offset, 0x67F, 0, 0x400, 3, angle);
-  angle+=15;  
-  drawArc(offset, 0x47F, 0, 0x400, 10); 
+  brLine_t tFig;
+  tFig.nodesNumb = sizeof(T_X)/sizeof(T_X[0]);
+  tFig.arrX = T_X;
+  tFig.arrY = T_Y;
+
+  offset.x = 0;
+  offset.y = 0;  
+   
+  angle+=10;//40;
+  drawArcCurve(offset, 0x67F, 0, 0x400, 3, angle);  
+     
+  drawArc(offset, 0x47F, 0x000, 0x400, 10);
+
+  offset.x = 0;
+  offset.y = -200; 
+  drawBrLine(tFig, offset, 12);    
+
+  offset.x = 0;
+  offset.y = 700; 
+
+  drawArc(offset, 0x7F, 0x000, 0x400, 50);
 }
 
 
@@ -128,6 +169,7 @@ void drawArc(point_t center, int16_t rad, uint16_t startAng, uint16_t finishAng,
       point.x = center.x + (getCosValue(startAng)*rad)/256 ;
       point.y = center.y + (getSinValue(startAng)*rad)/256 ;
       setPixel(point.x, point.y);
+
       startAng += speed;
     } 
   }
@@ -153,8 +195,6 @@ void drawArcCurve(point_t center, int16_t rad, uint16_t startAng, uint16_t finis
     while (startAng <= finishAng)
     {      
       radius = rad + getCosValue((startAng << 4) + curveOffs);
-      //radPhase += speed << 3;
-            //radius = rad + getCosValue(startAng<<3 + curveOffs);
       point.x = center.x + (getCosValue(startAng)*radius)/256 ;
       point.y = center.y + (getSinValue(startAng)*radius)/256 ;
       setPixel(point.x, point.y);
@@ -163,16 +203,17 @@ void drawArcCurve(point_t center, int16_t rad, uint16_t startAng, uint16_t finis
   }
   else 
   {
-    // while (startAng >= finishAng)
-    // {
-    //   radius = rad + getCosValue(startAng<<3 + curveOffs);
-    //   point.x = center.x + (getCosValue(startAng)*radius)/256 ;
-    //   point.y = center.y + (getSinValue(startAng)*radius)/256 ;
-    //   setPixel(point.x, point.y);
-    //   startAng -= speed;
-    // } 
+    while (startAng >= finishAng)
+    {
+      radius = rad + getCosValue((startAng << 4) + curveOffs);
+      point.x = center.x + (getCosValue(startAng)*radius)/256 ;
+      point.y = center.y + (getSinValue(startAng)*radius)/256 ;
+      setPixel(point.x, point.y);
+      startAng -= speed;
+    } 
   }
 }
+
 
 void drawBrLine(brLine_t inst, point_t offset, int16_t scale)
 {
@@ -208,14 +249,13 @@ void drawLine(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
   int8_t step = 20;
   int16_t pt_x = 0;
   int16_t pt_y = 0;  
-  int16_t offs_x = 100;
-  int16_t offs_y = 100;
+
   if (dx >= dy)
   {        
     for (int16_t i = 0; i <= dx; i += step)
     {      
-      pt_x = x1 + offs_x + x_dir*i;
-      pt_y = y1 + offs_y + y_dir*i*(dy+1)/(dx+1);
+      pt_x = x1 + x_dir*i;
+      pt_y = y1 + y_dir*i*(dy+1)/(dx+1);
       setPixel(pt_x, pt_y);
     }
   }
@@ -223,8 +263,8 @@ void drawLine(int16_t x1, int16_t y1, int16_t x2, int16_t y2)
   {
     for (int16_t i = 0; i <= dy; i += step)
     {      
-      pt_x = x1 + offs_x + x_dir*i*(dx+1)/(dy+1);
-      pt_y = y1 + offs_y + y_dir*i;
+      pt_x = x1 + x_dir*i*(dx+1)/(dy+1);
+      pt_y = y1 + y_dir*i;
       setPixel(pt_x, pt_y);
     }
   }
@@ -235,12 +275,12 @@ int16_t getSinValue(uint16_t angle)
 {
   uint16_t signBits = (angle >> 8) & 0x0003;
   if (signBits == 0)
-    return (int16_t)SIN_TAB_8BIT[angle&0x00FF];
+    return (int16_t)((uint16_t)SIN_TAB_8BIT[angle&0x00FF]);
   if (signBits == 1)
-    return (int16_t)SIN_TAB_8BIT[255 - angle&0x00FF];
+    return (int16_t)((uint16_t)SIN_TAB_8BIT[255 - angle&0x00FF]);
   if (signBits == 2)
-    return -(int16_t)SIN_TAB_8BIT[angle & 0x00FF];
-  return -(int16_t)SIN_TAB_8BIT[255 - angle&0x00FF];  
+    return -(int16_t)((uint16_t)SIN_TAB_8BIT[angle & 0x00FF]);
+  return -(int16_t)((uint16_t)SIN_TAB_8BIT[255 - angle&0x00FF]);  
 }
 
 
@@ -248,6 +288,7 @@ int16_t getCosValue(uint16_t angle)
 {
   return getSinValue(angle + 0x0100);
 }
+
 
 void rotateFigure(brLine_t inst, int16_t rX, int16_t rY, int16_t * outX, int16_t * outY)
 {

@@ -44,7 +44,7 @@
 DAC_HandleTypeDef hdac;
 
 /* USER CODE BEGIN PV */
-
+uint8_t page = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -94,6 +94,7 @@ int main(void)
   HAL_DAC_Start(&hdac, DAC_CHANNEL_1);
   HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
   initKeep();
+  int ledCnt = 0;
   /* USER CODE END 2 */
  
  
@@ -103,10 +104,36 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    //drawKeep();
+    //drawTBTC();
     //drawPFK();
-    drawTBTC();
-    //drawKeepRot();
+    switch (page)
+    {
+    case 0:
+      drawKeep();      
+      break;
+    case 1:
+      drawPFK();      
+      break;
+    case 2:
+      drawKeepResize();
+      break;
+    case 3:
+      drawKeepRot();
+      break;
+    case 4:
+      drawTBTC();
+      break;    
+    default:
+      page = 0;
+      break;
+    }
+
+    ledCnt++;
+    if (ledCnt > 10)
+    {
+      ledCnt = 0;
+      HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_9);
+    }   
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -240,7 +267,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
   if(GPIO_Pin == GPIO_PIN_0) // If The INT Source Is EXTI Line9 (A9 Pin)
   {
-	  HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_8); // Toggle The Output (LED) Pin
+	  //HAL_GPIO_TogglePin(GPIOE, GPIO_PIN_8); // Toggle The Output (LED) Pin
+    page++;
   }
 }
 /* USER CODE END 4 */
