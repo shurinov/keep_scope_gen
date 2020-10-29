@@ -104,23 +104,24 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    //drawTBTC();
-    //drawPFK();
     switch (page)
     {
     case 0:
-      drawKeep();      
+      lissajousDemo();
       break;
     case 1:
-      drawPFK();      
+      drawKeep();      
       break;
     case 2:
-      drawKeepResize();
+      drawPFK();      
       break;
     case 3:
-      drawKeepRot();
+      drawKeepResize();
       break;
     case 4:
+      drawKeepRot();
+      break;
+    case 5:
       drawTBTC();
       break;    
     default:

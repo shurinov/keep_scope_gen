@@ -4,6 +4,7 @@
 
 
 void initKeep(void);
+void lissajousDemo(void);
 void drawKeep(void);
 void drawKeepResize(void);
 void drawKeepRot(void);

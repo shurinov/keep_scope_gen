@@ -52,6 +52,7 @@ int16_t T_Y [] = {42, 28, 28, -42, -42, 28, 28, 42, 42};
 brLine_t figureKEEP = {sizeof(keepX)/sizeof(keepX[0]), keepX, keepY};
 point_t offset = {0, 0};
 uint16_t angle = 0;
+uint16_t angleSec = 0;
 int16_t scaleFactor = 0;
 void * workBuffX;
 void * workBuffY;
@@ -70,6 +71,26 @@ void initKeep(void)
 {   
   workBuffX = malloc(sizeof(keepX));
   workBuffY = malloc(sizeof(keepX));
+}
+
+
+int dreifCnt = 0;
+
+void lissajousDemo(void)
+{  
+  int16_t x = getSinValue(angle)*7;
+  int16_t y = getSinValue(angleSec)*7;
+  angle += 2;
+  angleSec += 5;
+
+  setPixel(x, y);
+
+  dreifCnt++;
+  if (dreifCnt > 0x01FF)
+  {
+    dreifCnt = 0;
+    angleSec += 1;
+  }
 }
 
 
